@@ -1,2 +1,2 @@
 # skylm
-DRM login screen
+DRM login manager
