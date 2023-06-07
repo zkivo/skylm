@@ -1,6 +1,12 @@
+#include <iostream>
+#include <string>
+#include <cstdio>
+#include <cinttypes>
+#include <sys/mman.h>
+#include <unistd.h>
+
 #include <drm_fourcc.h>
 #include <fcntl.h>
-#include <sys/mman.h>
 #include <drm.h>
 #include <xf86drm.h>
 #include <xf86drmMode.h>
@@ -9,6 +15,8 @@
 #define STB_IMAGE_RESIZE_IMPLEMENTATION
 #include "stb_image.h"
 #include "stb_image_resize.h"
+
+#include "util.h"
 
 struct dumb_framebuffer {
 	uint32_t id;     // DRM object ID
@@ -72,10 +80,11 @@ static uint32_t find_crtc(int drm_fd, drmModeRes *res, drmModeConnector *conn,
 bool create_fb(int drm_fd, uint32_t width, uint32_t height, struct dumb_framebuffer *fb)
 {
 	int ret;
-
+	struct drm_mode_map_dumb map;
+	
 	struct drm_mode_create_dumb create = {
-		.width = width,
 		.height = height,
+		.width = width,
 		.bpp = 32,
 	};
 
@@ -102,14 +111,14 @@ bool create_fb(int drm_fd, uint32_t width, uint32_t height, struct dumb_framebuf
 		goto error_dumb;
 	}
 
-	struct drm_mode_map_dumb map = { .handle = fb->handle };
+	map = { .handle = fb->handle };
 	ret = drmIoctl(drm_fd, DRM_IOCTL_MODE_MAP_DUMB, &map);
 	if (ret < 0) {
 		perror("DRM_IOCTL_MODE_MAP_DUMB");
 		goto error_fb;
 	}
 
-	fb->data = mmap(0, fb->size, PROT_READ | PROT_WRITE, MAP_SHARED,
+	fb->data = (uint8_t *)mmap(0, fb->size, PROT_READ | PROT_WRITE, MAP_SHARED,
 		drm_fd, map.offset);
 	if (!fb->data) {
 		perror("mmap");
@@ -131,6 +140,8 @@ error_dumb:
 
 int main(void)
 {
+	int ret;
+
 	/* We just take the first GPU that exists. */
 	int drm_fd = open("/dev/dri/card0", O_RDWR | O_NONBLOCK);
 	if (drm_fd < 0) {
@@ -154,14 +165,15 @@ int main(void)
 			continue;
 		}
 
-		struct connector *conn = malloc(sizeof *conn);
+		// struct connector *conn = (connector*)malloc(sizeof(connector));
+		struct connector* conn = new connector();
 		if (!conn) {
-			perror("malloc");
+			std::cerr << "creating connector" << std::endl;
 			goto cleanup;
 		}
 
 		conn->id = drm_conn->connector_id;
-		snprintf(conn->name, sizeof conn->name, "%s-%"PRIu32,
+		snprintf(conn->name, sizeof conn->name, "%s-" PRIu32,
 			conn_str(drm_conn->connector_type),
 			drm_conn->connector_type_id);
 		conn->connected = drm_conn->connection == DRM_MODE_CONNECTED;
@@ -169,15 +181,15 @@ int main(void)
 		conn->next = conn_list;
 		conn_list = conn;
 
-		printf("Found display %s\n", conn->name);
+		std::cout << "Found display " << conn->name << std::endl;
 
 		if (!conn->connected) {
-			printf("  Disconnected\n");
+			std::cout << "Disconnected" << std::endl;;
 			goto cleanup;
 		}
 
 		if (drm_conn->count_modes == 0) {
-			printf("No valid modes\n");
+			std::cout << "No valid modes" << std::endl;
 			conn->connected = false;
 			goto cleanup;
 		}
@@ -189,7 +201,7 @@ int main(void)
 			goto cleanup;
 		}
 
-		printf("  Using CRTC %"PRIu32"\n", conn->crtc_id);
+		printf("  Using CRTC %" PRIu32"\n", conn->crtc_id);
 
 		// [0] is the best mode, so we'll just use that.
 		conn->mode = drm_conn->modes[0];
@@ -198,7 +210,7 @@ int main(void)
 		conn->height = conn->mode.vdisplay;
 		conn->rate = refresh_rate(&conn->mode);
 
-		printf("  Using mode %"PRIu32"x%"PRIu32"@%"PRIu32"\n",
+		printf("  Using mode %" PRIu32"x%" PRIu32"@%" PRIu32"\n",
 			conn->width, conn->height, conn->rate);
 
 		if (!create_fb(drm_fd, conn->width, conn->height, &conn->fb)) {
@@ -206,13 +218,13 @@ int main(void)
 			goto cleanup;
 		}
 
-		printf("  Created frambuffer with ID %"PRIu32"\n", conn->fb.id);
+		printf("  Created frambuffer with ID %" PRIu32"\n", conn->fb.id);
 
 		// Save the previous CRTC configuration
 		conn->saved = drmModeGetCrtc(drm_fd, conn->crtc_id);
 
 		// Perform the modeset
-		int ret = drmModeSetCrtc(drm_fd, conn->crtc_id, conn->fb.id, 0, 0,
+		ret = drmModeSetCrtc(drm_fd, conn->crtc_id, conn->fb.id, 0, 0,
 			&conn->id, 1, &conn->mode);
 		if (ret < 0) {
 			perror("drmModeSetCrtc");
@@ -252,7 +264,7 @@ cleanup:
 				continue;
 
 			struct dumb_framebuffer *fb = &conn->fb;
-			unsigned char* img = malloc(fb->width * fb->height * DESIRED_CHANNELS);
+			unsigned char* img = (unsigned char *)malloc(fb->width * fb->height * DESIRED_CHANNELS);
 			stbir_resize_uint8_srgb(wallpaper,width,height,0,
 							img, fb->width, fb->height, 0, DESIRED_CHANNELS,-1,0);
 
