@@ -1,0 +1,6 @@
+#!/bin/bash
+echo "Setup meson project..."
+meson setup build
+echo "Compiling project..."
+cd build
+meson compile
