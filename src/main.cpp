@@ -12,8 +12,8 @@
 #include <xf86drmMode.h>
 
 #define STB_IMAGE_IMPLEMENTATION
-#define STB_IMAGE_RESIZE_IMPLEMENTATION
 #include "stb_image.h"
+#define STB_IMAGE_RESIZE_IMPLEMENTATION
 #include "stb_image_resize.h"
 
 #include "util.h"
@@ -104,7 +104,7 @@ bool create_fb(int drm_fd, uint32_t width, uint32_t height, struct dumb_framebuf
 	uint32_t strides[4] = { fb->stride };
 	uint32_t offsets[4] = { 0 };
 
-	ret = drmModeAddFB2(drm_fd, width, height, DRM_FORMAT_XRGB8888,
+	ret = drmModeAddFB2(drm_fd, width, height, DRM_FORMAT_ARGB8888, //not every format is supported by gpus. Use with confidence ARGB and XRGB (the X means the first 8 bit are ignored).
 		handles, strides, offsets, &fb->id, 0);
 	if (ret < 0) {
 		perror("drmModeAddFB2");
@@ -239,12 +239,15 @@ cleanup:
 	// load image and see
 	const int DESIRED_CHANNELS = 4;
 	int width, height, channels;
-	unsigned char *wallpaper = stbi_load("wallpaper.jpg", &width, &height, &channels, DESIRED_CHANNELS);
+	unsigned char *wallpaper = stbi_load("wallpaper.jpg", &width, &height, &channels, 0);
     if(wallpaper == NULL) {
  		printf("Error in loading the image\n");
  		exit(1);
     }
 	printf("Loaded image with a width of %dpx, a height of %dpx and %d channels\n", width, height, channels);
+	unsigned char* wall2 = (unsigned char*)malloc(width * height * 4);
+	convert_RGB_to_ARGB(wallpaper, wall2, width * height * 3);
+	wallpaper = wall2;
 	// printf("%lu", sizeof(wallpaper));
 
 	// // Draw some colours for 5 seconds
@@ -265,8 +268,8 @@ cleanup:
 
 			struct dumb_framebuffer *fb = &conn->fb;
 			unsigned char* img = (unsigned char *)malloc(fb->width * fb->height * DESIRED_CHANNELS);
-			stbir_resize_uint8(wallpaper,width,height,0,
-							img, fb->width, fb->height, 0, DESIRED_CHANNELS);
+			stbir_resize_uint8(wallpaper,width,height, width*DESIRED_CHANNELS,
+							img, fb->width, fb->height, fb->stride, DESIRED_CHANNELS);
 			for (uint32_t y = 0; y < fb->height; ++y) {
 				uint8_t *row = fb->data + fb->stride * y;
 

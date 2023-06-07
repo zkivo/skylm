@@ -32,6 +32,34 @@ const char *conn_str(uint32_t conn_type)
 	}
 }
 
+void convert_RGBA_to_ARGB(unsigned char* img, int num_bytes) {
+	unsigned char t_a, t_r, t_g, t_b;
+	for (int i = 0; i < num_bytes; i += 4) {
+		t_r = img[i];
+		t_g = img[i+1];
+		t_b = img[i+2];
+		t_a = img[i+3];
+		img[i]   = t_a;
+		img[i+1] = t_r;
+		img[i+2] = t_g;
+		img[i+3] = t_b;
+	}
+}
+
+void convert_RGB_to_ARGB(unsigned char* img, unsigned char* out, int num_bytes) {
+	unsigned char t_r, t_g, t_b;
+	int temp = 0;
+	for (int i = 0; i < num_bytes; i += 3, temp++) {
+		t_r = img[i];
+		t_g = img[i+1];
+		t_b = img[i+2];
+		out[i + temp]   = 255;
+		out[i+1 + temp] = t_r;
+		out[i+2 + temp] = t_g;
+		out[i+3 + temp] = t_b;
+	}
+}
+
 /*
  * Calculate an accurate refresh rate from 'mode'.
  * The result is in mHz.

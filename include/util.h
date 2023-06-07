@@ -17,4 +17,7 @@ const char *conn_str(uint32_t conn_type);
  */
 int refresh_rate(drmModeModeInfo *mode);
 
+void convert_RGBA_to_ARGB(unsigned char* img, int num_bytes);
+void convert_RGB_to_ARGB(unsigned char* img, unsigned char* out, int num_bytes);
+
 #endif
