@@ -265,9 +265,8 @@ cleanup:
 
 			struct dumb_framebuffer *fb = &conn->fb;
 			unsigned char* img = (unsigned char *)malloc(fb->width * fb->height * DESIRED_CHANNELS);
-			stbir_resize_uint8_srgb(wallpaper,width,height,0,
-							img, fb->width, fb->height, 0, DESIRED_CHANNELS,-1,0);
-
+			stbir_resize_uint8(wallpaper,width,height,0,
+							img, fb->width, fb->height, 0, DESIRED_CHANNELS);
 			for (uint32_t y = 0; y < fb->height; ++y) {
 				uint8_t *row = fb->data + fb->stride * y;
 
