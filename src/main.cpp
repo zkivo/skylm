@@ -239,15 +239,15 @@ cleanup:
 	// load image and see
 	const int DESIRED_CHANNELS = 4;
 	int width, height, channels;
-	unsigned char *wallpaper = stbi_load("wallpaper.jpg", &width, &height, &channels, 0);
+	unsigned char *wallpaper = stbi_load("wallpaper3.jpg", &width, &height, &channels, DESIRED_CHANNELS);
     if(wallpaper == NULL) {
  		printf("Error in loading the image\n");
  		exit(1);
     }
 	printf("Loaded image with a width of %dpx, a height of %dpx and %d channels\n", width, height, channels);
-	unsigned char* wall2 = (unsigned char*)malloc(width * height * 4);
-	convert_RGB_to_ARGB(wallpaper, wall2, width * height * 3);
-	wallpaper = wall2;
+	//unsigned char* wall2 = (unsigned char*)malloc(width * height * 4);
+	convert_RGBA_to_ARGB(wallpaper, width * height * 4);
+	//wallpaper = wall2;
 	// printf("%lu", sizeof(wallpaper));
 
 	// // Draw some colours for 5 seconds

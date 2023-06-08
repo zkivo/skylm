@@ -38,11 +38,11 @@ void convert_RGBA_to_ARGB(unsigned char* img, int num_bytes) {
 		t_r = img[i];
 		t_g = img[i+1];
 		t_b = img[i+2];
-		t_a = img[i+3];
-		img[i]   = t_a;
-		img[i+1] = t_r;
-		img[i+2] = t_g;
-		img[i+3] = t_b;
+		//t_a = img[i+3];
+		img[i]   = t_b;
+		img[i+1] = t_g;
+		img[i+2] = t_r;
+		//img[i+3] = t_b;
 	}
 }
 
