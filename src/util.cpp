@@ -33,7 +33,7 @@ const char *conn_str(uint32_t conn_type)
 }
 
 void convert_RGBA_to_ARGB(unsigned char* img, int num_bytes) {
-	unsigned char t_a, t_r, t_g, t_b;
+	unsigned char t_r, t_g, t_b;
 	for (int i = 0; i < num_bytes; i += 4) {
 		t_r = img[i];
 		t_g = img[i+1];

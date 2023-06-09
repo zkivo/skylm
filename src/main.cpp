@@ -16,6 +16,9 @@
 #define STB_IMAGE_RESIZE_IMPLEMENTATION
 #include "stb_image_resize.h"
 
+#include <ft2build.h>
+#include FT_FREETYPE_H
+
 #include "util.h"
 
 struct dumb_framebuffer {
