@@ -32,6 +32,17 @@ const char *conn_str(uint32_t conn_type)
 	}
 }
 
+int get_dpi(int mm_width, int num_pixels) {
+	//supposing dpi is equal between height and width we use one function
+	float inch_width = mm_width * 0.03937008;
+	return (int)(num_pixels / inch_width); 
+}
+
+int get_num_pixel(int dpi, float mm_height) {
+	float inch_height = mm_height / 0.03937008;
+	return (int)(dpi * inch_height);
+}
+
 void convert_RGBA_to_ARGB(unsigned char* img, int num_bytes) {
 	unsigned char t_r, t_g, t_b;
 	for (int i = 0; i < num_bytes; i += 4) {

@@ -17,6 +17,10 @@ const char *conn_str(uint32_t conn_type);
  */
 int refresh_rate(drmModeModeInfo *mode);
 
+int get_dpi(int mm_width, int num_pixels);
+
+int get_num_pixel(int dpi, float mm_height);
+
 void convert_RGBA_to_ARGB(unsigned char* img, int num_bytes);
 void convert_RGB_to_ARGB(unsigned char* img, unsigned char* out, int num_bytes);
 

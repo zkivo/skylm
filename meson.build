@@ -1,6 +1,8 @@
 project('skylm', 'cpp')
 inc_dir = include_directories('include')
-dep     = [dependency('libdrm'), dependency('freetype2')]
-executable('skylm', 'src/main.cpp', 'src/util.cpp' , 
+deps     = [dependency('libdrm'), dependency('freetype2')]
+libs     = [library('util', 'src/util.cpp', include_directories: inc_dir, dependencies: deps), library('font_util', 'src/font_util.cpp', include_directories: inc_dir, dependencies: deps)]
+executable('skylm', 'src/main.cpp' , 
     include_directories: inc_dir,
-    dependencies: dep)
+    dependencies: deps,
+    link_with: libs)

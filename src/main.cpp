@@ -1,3 +1,4 @@
+#include <cstdint>
 #include <iostream>
 #include <string>
 #include <cstdio>
@@ -15,9 +16,6 @@
 #include "stb_image.h"
 #define STB_IMAGE_RESIZE_IMPLEMENTATION
 #include "stb_image_resize.h"
-
-#include <ft2build.h>
-#include FT_FREETYPE_H
 
 #include "util.h"
 
@@ -45,6 +43,8 @@ struct connector {
 	uint32_t width;
 	uint32_t height;
 	uint32_t rate;
+
+	uint32_t dpi;
 
 	struct dumb_framebuffer fb;
 
@@ -232,6 +232,8 @@ int main(void)
 		if (ret < 0) {
 			perror("drmModeSetCrtc");
 		}
+
+		conn->dpi = get_dpi(drm_conn->mmWidth, conn->width);
 
 cleanup:
 		drmModeFreeConnector(drm_conn);
