@@ -1,3 +1,4 @@
+#include <cstddef>
 #include <cstdint>
 #include <iostream>
 #include <string>
@@ -17,39 +18,9 @@
 #define STB_IMAGE_RESIZE_IMPLEMENTATION
 #include "stb_image_resize.h"
 
+#include "ppm.h"
+#include "font_util.h"
 #include "util.h"
-
-struct dumb_framebuffer {
-	uint32_t id;     // DRM object ID
-	uint32_t width;
-	uint32_t height;
-	uint32_t stride;
-	uint32_t handle; // driver-specific handle
-	uint64_t size;   // size of mapping
-
-	uint8_t *data;   // mmapped data we can write to
-};
-
-struct connector {
-	uint32_t id;
-	char name[16];
-	bool connected;
-
-	drmModeCrtc *saved;
-
-	uint32_t crtc_id;
-	drmModeModeInfo mode;
-
-	uint32_t width;
-	uint32_t height;
-	uint32_t rate;
-
-	uint32_t dpi;
-
-	struct dumb_framebuffer fb;
-
-	struct connector *next;
-};
 
 static uint32_t find_crtc(int drm_fd, drmModeRes *res, drmModeConnector *conn,
 		uint32_t *taken_crtcs)
@@ -143,6 +114,21 @@ error_dumb:
 
 int main(void)
 {
+
+	//-------------------------------
+	// 		TESTING FONT UTIL
+	//-------------------------------
+	FontUtil font_util(70);
+	unsigned char* buffer;
+	buffer = font_util.getARGBBitmapCharcode('A');
+	PPM ppm(font_util.width, font_util.height);
+	for (int i = 0; i < font_util.height * font_util.width * 4; i+=4) {
+        int p = i / 4;
+		ppm.set_pixel(p % font_util.width, p / font_util.width, buffer[i + 2], buffer[i + 1], buffer[i]);
+    }
+	ppm.write_file("output.ppm");
+	return 0;
+	//-------------------------------
 	int ret;
 
 	/* We just take the first GPU that exists. */
@@ -234,12 +220,20 @@ int main(void)
 		}
 
 		conn->dpi = get_dpi(drm_conn->mmWidth, conn->width);
-
+		// if (font_util == NULL) {
+		// 	font_util = new FontUtil(conn->dpi);
+		// 	if (font_util->error) {
+		// 		std::cout << "Error while creating font util" << std::endl;
+		// 		return -1;
+		// 	}
+		// }
 cleanup:
 		drmModeFreeConnector(drm_conn);
 	}
 
 	drmModeFreeResources(res);
+
+	//font_util()
 
 	// load image and see
 	const int DESIRED_CHANNELS = 4;

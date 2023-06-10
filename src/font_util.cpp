@@ -10,7 +10,7 @@ FontUtil::FontUtil(int monitor_dpi) {
     }
 
     error = FT_New_Face( library,
-                        "/usr/share/fonts/truetype/arial.ttf",
+                        "/usr/share/fonts/gnu-free/FreeMono.otf",
                         0,
                         &face );
     if ( error == FT_Err_Unknown_File_Format ) {
@@ -35,9 +35,6 @@ unsigned char* FontUtil::getARGBBitmapCharcode(uint32_t char_code) {
 
     unsigned char* out; // the output must be little endian so Blue first 
     unsigned char* gray_bitmap; //just one color per pixel
-    
-    unsigned int height;
-    unsigned int width;
 
     slot = face->glyph;
     ft_bitmap = slot->bitmap;

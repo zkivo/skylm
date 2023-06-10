@@ -12,13 +12,14 @@ class FontUtil {
 
     public:
         FontUtil(int monitor_dpi);
-        
         unsigned char* getARGBBitmapCharcode(uint32_t char_code);
-
+    public:
+        FT_Error      error;
+        FT_Face       face;      /* handle to face object */
+        unsigned int height;     //bitmap dimension
+        unsigned int width;
     private:
         FT_Library    library;   /* handle to library     */
-        FT_Face       face;      /* handle to face object */
-        FT_Error      error;
         FT_GlyphSlot  slot;
         FT_UInt  glyph_index;
 };
