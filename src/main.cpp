@@ -244,7 +244,7 @@ cleanup:
 	// load image and see
 	const int DESIRED_CHANNELS = 4;
 	int width, height, channels;
-	unsigned char *wallpaper = stbi_load("wallpaper3.jpg", &width, &height, &channels, DESIRED_CHANNELS);
+	unsigned char *wallpaper = stbi_load("wallpaper.jpg", &width, &height, &channels, DESIRED_CHANNELS);
     if(wallpaper == NULL) {
  		printf("Error in loading the image\n");
  		exit(1);

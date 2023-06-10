@@ -44,6 +44,8 @@ int get_num_pixel(int dpi, float mm_height) {
 }
 
 void convert_RGBA_to_ARGB(unsigned char* img, int num_bytes) {
+	// RGBA is big endian encoded so R first (stb image library)
+	// ARGB is little endiand encord so B first (drm library)
 	unsigned char t_r, t_g, t_b;
 	for (int i = 0; i < num_bytes; i += 4) {
 		t_r = img[i];
