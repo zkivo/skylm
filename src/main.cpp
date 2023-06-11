@@ -118,7 +118,12 @@ int main(void)
 	//-------------------------------
 	// 		TESTING FONT UTIL
 	//-------------------------------
-	FontUtil font_util(70);
+	std::cout << "test..." << std::endl; 
+	FontUtil font_util(108);
+	if (font_util.error) {
+		std::cout << "error " << font_util.error << std::endl; 
+		return 1;
+	}
 	unsigned char* buffer;
 	buffer = font_util.getARGBBitmapCharcode('A');
 	PPM ppm(font_util.width, font_util.height);

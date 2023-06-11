@@ -39,7 +39,7 @@ int get_dpi(int mm_width, int num_pixels) {
 }
 
 int get_num_pixel(int dpi, float mm_height) {
-	float inch_height = mm_height / 0.03937008;
+	float inch_height = mm_height * 0.03937008;
 	return (int)(dpi * inch_height);
 }
 

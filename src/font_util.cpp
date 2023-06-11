@@ -24,10 +24,13 @@ FontUtil::FontUtil(int monitor_dpi) {
 
     error = FT_Set_Char_Size(
           face,    /* handle to face object         */
-          get_num_pixel(monitor_dpi, 1000.0f)*64,     /* char_width in 1/64 of points  */
-          get_num_pixel(monitor_dpi, 1000.0f)*64,   /* char_height in 1/64 of points */
+          get_num_pixel(monitor_dpi, 10.0f)*64,     /* char_width in 1/64 of points  */
+          get_num_pixel(monitor_dpi, 10.0f)*64,   /* char_height in 1/64 of points */
           monitor_dpi,     /* horizontal device resolution  */
           monitor_dpi);   /* vertical device resolution    */
+    /* use 50pt at 100dpi */
+    // error = FT_Set_Char_Size( face, 50 * 64, 0,
+    //                         100, 0 ); 
 }
 
 unsigned char* FontUtil::getARGBBitmapCharcode(uint32_t char_code) {
@@ -35,13 +38,6 @@ unsigned char* FontUtil::getARGBBitmapCharcode(uint32_t char_code) {
 
     unsigned char* out; // the output must be little endian so Blue first 
     unsigned char* gray_bitmap; //just one color per pixel
-
-    slot = face->glyph;
-    ft_bitmap = slot->bitmap;
-    gray_bitmap = ft_bitmap.buffer;
-
-    height = ft_bitmap.rows;
-    width  = ft_bitmap.width;
 
     /* retrieve glyph index from character code */
     glyph_index = FT_Get_Char_Index(face, char_code);
@@ -55,6 +51,12 @@ unsigned char* FontUtil::getARGBBitmapCharcode(uint32_t char_code) {
     error = FT_Render_Glyph( face->glyph, FT_RENDER_MODE_NORMAL );
     if ( error )
         return NULL;
+
+    slot = face->glyph;
+    ft_bitmap = slot->bitmap;
+    gray_bitmap = ft_bitmap.buffer;
+    height = ft_bitmap.rows;
+    width  = ft_bitmap.width;
 
     out = (unsigned char*) malloc(height * width * 4);
     for (int i = 0, p = 0 ; i < height * width; i++, p += 4) {
