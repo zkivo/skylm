@@ -2,11 +2,10 @@
 #define _FONT_UTIL_H_
 
 #include <iostream>
+#include <cstdint>
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
-
-#include "util.h"
 
 class FontUtil {
 

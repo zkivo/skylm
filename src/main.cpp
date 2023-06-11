@@ -159,8 +159,8 @@ int main(void)
 			continue;
 		}
 
-		// struct connector *conn = (connector*)malloc(sizeof(connector));
-		struct connector* conn = new connector();
+		struct connector *conn = (connector*)malloc(sizeof(connector));
+		//struct connector* conn = new connector();
 		if (!conn) {
 			std::cerr << "creating connector" << std::endl;
 			goto cleanup;
@@ -223,15 +223,9 @@ int main(void)
 		if (ret < 0) {
 			perror("drmModeSetCrtc");
 		}
-
+		
 		conn->dpi = get_dpi(drm_conn->mmWidth, conn->width);
-		// if (font_util == NULL) {
-		// 	font_util = new FontUtil(conn->dpi);
-		// 	if (font_util->error) {
-		// 		std::cout << "Error while creating font util" << std::endl;
-		// 		return -1;
-		// 	}
-		// }
+		conn->font_util = FontUtil(conn->dpi);
 cleanup:
 		drmModeFreeConnector(drm_conn);
 	}

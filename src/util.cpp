@@ -1,3 +1,6 @@
+#include <string>
+
+#include "font_util.h"
 #include "util.h"
 
 #include <stdint.h>
@@ -59,18 +62,20 @@ void convert_RGBA_to_ARGB(unsigned char* img, int num_bytes) {
 	}
 }
 
-void convert_RGB_to_ARGB(unsigned char* img, unsigned char* out, int num_bytes) {
-	unsigned char t_r, t_g, t_b;
-	int temp = 0;
-	for (int i = 0; i < num_bytes; i += 3, temp++) {
-		t_r = img[i];
-		t_g = img[i+1];
-		t_b = img[i+2];
-		out[i + temp]   = 255;
-		out[i+1 + temp] = t_r;
-		out[i+2 + temp] = t_g;
-		out[i+3 + temp] = t_b;
+void add_text_to_framebuffer(float x_pos, float y_pos, std::string text,
+		unsigned char* buffer, int width, int height, FontUtil& font_util) {
+	int x = width * x_pos;
+	int y = height * y_pos;
+	unsigned int* fb = (unsigned int*)buffer;
+	for (int c = 0; c < text.length(); c++) {
+		unsigned int* buff = (unsigned int*)font_util.getARGBBitmapCharcode(text[c]);
+		for (int i = 0; i < font_util.height; i++) {
+			for (int j = 0; i < font_util.width; j++) {
+				fb[(x+j)+(y+i)] += buff[i+j];
+			}
+		}
 	}
+
 }
 
 /*
