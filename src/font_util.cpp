@@ -10,7 +10,7 @@ FontUtil::FontUtil(int monitor_dpi) {
     }
 
     error = FT_New_Face( library,
-                        "/usr/share/fonts/gnu-free/FreeMono.otf",
+                        "/usr/share/fonts/opentype/cantarell/Cantarell-Regular.otf",
                         0,
                         &face );
     if ( error == FT_Err_Unknown_File_Format ) {

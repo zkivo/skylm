@@ -118,21 +118,21 @@ int main(void)
 	//-------------------------------
 	// 		TESTING FONT UTIL
 	//-------------------------------
-	std::cout << "test..." << std::endl; 
-	FontUtil font_util(108);
-	if (font_util.error) {
-		std::cout << "error " << font_util.error << std::endl; 
-		return 1;
-	}
-	unsigned char* buffer;
-	buffer = font_util.getARGBBitmapCharcode('A');
-	PPM ppm(font_util.width, font_util.height);
-	for (int i = 0; i < font_util.height * font_util.width * 4; i+=4) {
-        int p = i / 4;
-		ppm.set_pixel(p % font_util.width, p / font_util.width, buffer[i + 2], buffer[i + 1], buffer[i]);
-    }
-	ppm.write_file("output.ppm");
-	return 0;
+	// std::cout << "test..." << std::endl; 
+	// FontUtil font_util(108);
+	// if (font_util.error) {
+	// 	std::cout << "error " << font_util.error << std::endl; 
+	// 	return 1;
+	// }
+	// unsigned char* buffer;
+	// buffer = font_util.getARGBBitmapCharcode('A');
+	// PPM ppm(font_util.width, font_util.height);
+	// for (int i = 0; i < font_util.height * font_util.width * 4; i+=4) {
+    //     int p = i / 4;
+	// 	ppm.set_pixel(p % font_util.width, p / font_util.width, buffer[i + 2], buffer[i + 1], buffer[i]);
+    // }
+	// ppm.write_file("output.ppm");
+	// return 0;
 	//-------------------------------
 	int ret;
 
@@ -237,7 +237,7 @@ cleanup:
 	// load image and see
 	const int DESIRED_CHANNELS = 4;
 	int width, height, channels;
-	unsigned char *wallpaper = stbi_load("wallpaper.jpg", &width, &height, &channels, DESIRED_CHANNELS);
+	unsigned char *wallpaper = stbi_load("wallpaper3.jpg", &width, &height, &channels, DESIRED_CHANNELS);
     if(wallpaper == NULL) {
  		printf("Error in loading the image\n");
  		exit(1);
