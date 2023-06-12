@@ -225,6 +225,7 @@ int main(void)
 		}
 		
 		conn->dpi = get_dpi(drm_conn->mmWidth, conn->width);
+		std::cout << "dpi: " << conn->dpi << std::endl;
 		conn->font_util = FontUtil(conn->dpi);
 cleanup:
 		drmModeFreeConnector(drm_conn);
@@ -237,7 +238,7 @@ cleanup:
 	// load image and see
 	const int DESIRED_CHANNELS = 4;
 	int width, height, channels;
-	unsigned char *wallpaper = stbi_load("wallpaper3.jpg", &width, &height, &channels, DESIRED_CHANNELS);
+	unsigned char *wallpaper = stbi_load("../images/wallpaper.jpg", &width, &height, &channels, DESIRED_CHANNELS);
     if(wallpaper == NULL) {
  		printf("Error in loading the image\n");
  		exit(1);
@@ -268,6 +269,7 @@ cleanup:
 			unsigned char* img = (unsigned char *)malloc(fb->width * fb->height * DESIRED_CHANNELS);
 			stbir_resize_uint8(wallpaper,width,height, width*DESIRED_CHANNELS,
 							img, fb->width, fb->height, fb->stride, DESIRED_CHANNELS);
+			add_text_to_framebuffer(0.5f,0.5f,"suca",img,fb->width,fb->height,conn->font_util);
 			for (uint32_t y = 0; y < fb->height; ++y) {
 				uint8_t *row = fb->data + fb->stride * y;
 

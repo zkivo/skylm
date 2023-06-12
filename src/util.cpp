@@ -63,31 +63,33 @@ void convert_RGBA_to_ARGB(unsigned char* img, int num_bytes) {
 }
 
 void add_text_to_framebuffer(float x_pos, float y_pos, std::string text,
-		unsigned char* out_img, int width, int height, FontUtil& font_util) {
-	int x = width * x_pos;
-	int y = height * y_pos;
+		unsigned char* out_img, int out_width, int out_height, FontUtil& font_util) {
+	int x = out_width * x_pos;
+	int y = out_height * y_pos;
 	int spacing = 5; // value in pixel
+	int offset = 0;
 	unsigned char* background_value;
 	unsigned char* foreground_value;
-	//unsigned int* fb = (unsigned int*)buffer;
-	int index_out_img = (y * width * 4) + (x * 4);
+	const int NUM_CHANNELS = 4;
 	for (int c = 0; c < text.length(); c++) {
 		unsigned char* buff = font_util.getARGBBitmapCharcode(text[c]);
 		for (int i = 0; i < font_util.height; i++) {
-			for (int j = 0; i < font_util.width; j++) {
+			int index_out_img = ((y + i) * out_width * NUM_CHANNELS) + ((x + offset) * NUM_CHANNELS);
+			for (int j = 0; j < font_util.width; j++) {
 				int index_inside_img = (i * font_util.width * 4) + j * 4;
 				for (int k = 0; k < 4; k++) {
-					background_value = &out_img[index_out_img + j * font_util.width * 4 + k];
+					background_value = &out_img[index_out_img + (j * 4) + k];
 					foreground_value = &buff[index_inside_img + k];
 					if ((int)(*background_value + *foreground_value) > (int) 255) {
 						*background_value = 255;
+					} else {
+						*background_value += *foreground_value;
 					}
 				}
 			}
 		}
-		index_out_img += font_util.width * 4 + spacing * 4;
+		offset += font_util.width + spacing;
 	}
-
 }
 
 /*

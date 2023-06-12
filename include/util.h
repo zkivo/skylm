@@ -63,7 +63,7 @@ int get_num_pixel(int dpi, float mm_height);
 // out_img is a ARGB little endian framebuffer
 // width and height are the resolution of the frame buffer
 void add_text_to_framebuffer(float x_pos, float y_pos, std::string text,
-							 unsigned char* out_img, int width, int height, const FontUtil& font_util);
+							 unsigned char* out_img, int out_width, int out_height, FontUtil& font_util);
 
 void convert_RGBA_to_ARGB(unsigned char* img, int num_bytes);
 //void convert_RGB_to_ARGB(unsigned char* img, unsigned char* out, int num_bytes);
